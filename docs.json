@@ -22,14 +22,11 @@
             ]
           },
           {
-            "group": "Essentials",
+            "group": "Inbound Tool",
             "pages": [
-              "essentials/markdown",
-              "essentials/code",
-              "essentials/images",
-              "essentials/settings",
-              "essentials/navigation",
-              "essentials/reusable-snippets"
+              "inbound-tool/api-reference",
+              "inbound-tool/quickstart",
+              "inbound-tool/starter-kits"
             ]
           }
         ]
@@ -59,17 +56,17 @@
       "anchors": [
         {
           "anchor": "Documentation",
-          "href": "https://mintlify.com/docs",
+          "href": "https://docs.sixtyfour.ai",
           "icon": "book-open-cover"
         },
         {
           "anchor": "Community",
-          "href": "https://mintlify.com/community",
+          "href": "https://www.reddit.com/r/64ai/",
           "icon": "slack"
         },
         {
           "anchor": "Blog",
-          "href": "https://mintlify.com/blog",
+          "href": "https://sixtyfour.ai/blog",
           "icon": "newspaper"
         }
       ]
@@ -89,14 +86,14 @@
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://dashboard.mintlify.com"
+      "href": "https://app.sixtyfour.ai"
     }
   },
   "footer": {
     "socials": {
-      "x": "https://x.com/mintlify",
-      "github": "https://github.com/mintlify",
-      "linkedin": "https://linkedin.com/company/mintlify"
+      "x": "https://x.com/sixtyfourai",
+      "github": "https://github.com/sixtyfour-ai",
+      "linkedin": "https://www.linkedin.com/company/sixtyfourai"
     }
   }
 }
