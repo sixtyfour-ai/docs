@@ -1,0 +1,102 @@
+---
+title: API Reference
+description: "Complete API documentation for the Inbound Tool"
+---
+
+# API Reference
+
+This section provides detailed documentation for all available API endpoints and methods.
+
+## Authentication
+
+All API requests require authentication using your API key:
+
+```javascript
+const inboundTool = new InboundTool({
+  apiKey: 'your-api-key'
+});
+```
+
+## Core Methods
+
+### `initialize()`
+
+Initializes the Inbound Tool and establishes a connection to the API.
+
+```javascript
+await inboundTool.initialize();
+```
+
+### `processLeads(options)`
+
+Processes leads based on specified criteria.
+
+**Parameters:**
+- `options` (Object):
+  - `source` (String): Lead source (e.g., 'linkedin', 'salesforce')
+  - `filters` (Object): Filter criteria
+  - `limit` (Number): Maximum number of leads to process
+
+**Example:**
+```javascript
+const results = await inboundTool.processLeads({
+  source: 'linkedin',
+  filters: {
+    industry: 'technology',
+    companySize: 'medium'
+  },
+  limit: 100
+});
+```
+
+### `getLeadDetails(leadId)`
+
+Retrieves detailed information about a specific lead.
+
+**Parameters:**
+- `leadId` (String): Unique identifier of the lead
+
+**Example:**
+```javascript
+const leadDetails = await inboundTool.getLeadDetails('lead-123');
+```
+
+## Webhooks
+
+The Inbound Tool supports webhooks for real-time notifications. Configure webhooks in your dashboard to receive updates about:
+
+- New leads
+- Lead status changes
+- Processing completion
+
+## Rate Limits
+
+- Free tier: 100 requests/minute
+- Pro tier: 1000 requests/minute
+- Enterprise tier: Custom limits
+
+## Error Handling
+
+The API uses standard HTTP status codes:
+
+- 200: Success
+- 400: Bad Request
+- 401: Unauthorized
+- 403: Forbidden
+- 404: Not Found
+- 429: Too Many Requests
+- 500: Server Error
+
+## SDKs
+
+Official SDKs are available for:
+
+- [JavaScript/Node.js](https://github.com/sixtyfour/inbound-tool-js)
+- [Python](https://github.com/sixtyfour/inbound-tool-python)
+- [Ruby](https://github.com/sixtyfour/inbound-tool-ruby)
+
+## Need More Help?
+
+- Check out our [starter kits](/inbound-tool/starter-kits)
+- Visit our [community forum](https://community.sixtyfour.ai)
+- Contact our [support team](mailto:support@sixtyfour.ai) 

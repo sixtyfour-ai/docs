@@ -1,0 +1,137 @@
+---
+title: Starter Kits
+description: "Pre-built templates and examples to jumpstart your Inbound Tool projects"
+---
+
+# Starter Kits
+
+Jumpstart your development with these pre-built templates and examples.
+
+## Quick Start Templates
+
+<CardGroup cols={2}>
+  <Card
+    title="Basic Lead Processing"
+    icon="code"
+    href="https://github.com/sixtyfour/inbound-tool-starter-basic"
+  >
+    A simple template for basic lead processing and filtering
+  </Card>
+  <Card
+    title="Advanced Analytics"
+    icon="chart-line"
+    href="https://github.com/sixtyfour/inbound-tool-starter-analytics"
+  >
+    Template with built-in analytics and reporting features
+  </Card>
+</CardGroup>
+
+## Framework-Specific Examples
+
+### React Integration
+
+```bash
+git clone https://github.com/sixtyfour/inbound-tool-react-example
+cd inbound-tool-react-example
+npm install
+npm start
+```
+
+Features:
+- Real-time lead updates
+- Interactive dashboard
+- Custom filtering components
+
+### Next.js Template
+
+```bash
+git clone https://github.com/sixtyfour/inbound-tool-nextjs-template
+cd inbound-tool-nextjs-template
+npm install
+npm run dev
+```
+
+Features:
+- Server-side rendering
+- API routes
+- Authentication integration
+
+## Industry-Specific Templates
+
+<CardGroup cols={3}>
+  <Card
+    title="SaaS Sales"
+    icon="cloud"
+    href="https://github.com/sixtyfour/inbound-tool-saas-template"
+  >
+    Optimized for SaaS companies
+  </Card>
+  <Card
+    title="E-commerce"
+    icon="shopping-cart"
+    href="https://github.com/sixtyfour/inbound-tool-ecommerce-template"
+  >
+    Built for e-commerce businesses
+  </Card>
+  <Card
+    title="B2B Enterprise"
+    icon="building"
+    href="https://github.com/sixtyfour/inbound-tool-enterprise-template"
+  >
+    Designed for enterprise sales teams
+  </Card>
+</CardGroup>
+
+## Integration Examples
+
+### CRM Integration
+
+```javascript
+// Salesforce Integration Example
+import { InboundTool } from '@sixtyfour/inbound-tool';
+import { SalesforceClient } from '@sixtyfour/salesforce-integration';
+
+const inboundTool = new InboundTool({
+  apiKey: 'your-api-key'
+});
+
+const salesforce = new SalesforceClient({
+  clientId: 'your-client-id',
+  clientSecret: 'your-client-secret'
+});
+
+// Sync leads between systems
+async function syncLeads() {
+  const leads = await inboundTool.processLeads();
+  await salesforce.createLeads(leads);
+}
+```
+
+### Marketing Automation
+
+```javascript
+// HubSpot Integration Example
+import { InboundTool } from '@sixtyfour/inbound-tool';
+import { HubSpotClient } from '@sixtyfour/hubspot-integration';
+
+const inboundTool = new InboundTool({
+  apiKey: 'your-api-key'
+});
+
+const hubspot = new HubSpotClient({
+  apiKey: 'your-hubspot-key'
+});
+
+// Create marketing campaigns
+async function createCampaign(leads) {
+  const campaign = await hubspot.createCampaign({
+    name: 'New Leads Campaign',
+    leads: leads
+  });
+  return campaign;
+}
+```
+
+## Need Custom Solutions?
+
+Our team can help you build custom integrations and solutions. [Contact us](mailto:solutions@sixtyfour.ai) to discuss your specific needs. 
