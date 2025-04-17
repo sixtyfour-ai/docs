@@ -102,24 +102,18 @@
     },
     "links": [
       {
-        "group": "Product",
         "items": [
           {
-            "label": "Features",
-            "href": "https://sixtyfour.ai/features"
+            "label": "Dashboard",
+            "href": "https://app.sixtyfour.ai"
           },
           {
             "label": "Pricing",
             "href": "https://sixtyfour.ai/pricing"
-          },
-          {
-            "label": "Changelog",
-            "href": "https://sixtyfour.ai/changelog"
           }
         ]
       },
       {
-        "group": "Resources",
         "items": [
           {
             "label": "Documentation",
@@ -128,23 +122,14 @@
           {
             "label": "Blog",
             "href": "https://sixtyfour.ai/blog"
-          },
-          {
-            "label": "Community",
-            "href": "https://www.reddit.com/r/64ai/"
           }
         ]
       },
       {
-        "group": "Company",
         "items": [
           {
             "label": "About",
             "href": "https://sixtyfour.ai/about"
-          },
-          {
-            "label": "Careers",
-            "href": "https://sixtyfour.ai/careers"
           },
           {
             "label": "Contact",
