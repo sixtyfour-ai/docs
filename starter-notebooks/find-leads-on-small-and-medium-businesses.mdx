@@ -1,0 +1,358 @@
+This notebook teaches you how to use the Sixtyfour API to find and enrich businesses via our API. To get started, go to [https://app.sixtyfour.ai](https://app.sixtyfour.ai) and sign up to create an account with an API key.
+
+## Notebook Versions
+
+You can access this notebook in different formats:
+
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/sixtyfour-ai/notebooks/blob/main/smb.ipynb)
+[![Open In Github](https://img.shields.io/badge/Open-In%20Github-blue)](https://github.com/sixtyfour-ai/notebooks/blob/main/smb.ipynb)
+
+## Prerequisites
+
+Before you begin, make sure you have:
+1. A Sixtyfour API key (get it from the dashboard after signing up)
+2. Python 3.7+ installed
+3. Required Python packages:
+   - pandas
+   - requests
+   - python-dotenv
+   - httpx
+   - nest-asyncio
+
+## Set up
+
+First, let's import the necessary libraries and set up our environment:
+
+```python
+import pandas as pd
+import requests
+import os
+from dotenv import load_dotenv
+import asyncio
+import httpx
+import nest_asyncio
+nest_asyncio.apply()
+
+load_dotenv()
+SIXTYFOUR_API_KEY = os.getenv('SIXTYFOUR_API_KEY')
+```
+
+Make sure to create a `.env` file in your project directory with your API key:
+```
+SIXTYFOUR_API_KEY=your_api_key_here
+```
+
+## Searching for businesses
+
+Let's start by defining our search query. The search query can be any natural language description of the businesses you want to find:
+
+```python
+search_query = 'Find me all photographers in La Jolla, California'
+```
+
+We can define the fields we want to collect for each business. These fields will be populated by the API based on available information:
+
+```python
+fields = {
+    "company_name": "Name of the company",
+    "company_email": "Email for the company",
+    "address": "Where are they located",
+    "city": "City they are located in",
+    "state": "Which state do they operate in",
+    "phone_number": "Their phone number",
+    "company_linkedin": "Linkedin profile of the company if available",
+    "google_profile": "Google business profile if found",
+    "website": "Website of the company",
+    "key_people": "name of people here separated by commas"
+}
+```
+
+Now let's make the API call to search for businesses. The API will return a list of businesses matching your search criteria:
+
+```python
+res = requests.post('https://api.sixtyfour.ai/search', 
+    headers={
+        'x-api-key': SIXTYFOUR_API_KEY,
+        "Content-Type": "application/json"
+    }, 
+    json={
+        "search_query": search_query,
+        "struct": fields
+    }
+)
+
+df = pd.DataFrame(res.json())
+```
+
+Example search results:
+```python
+# Display the first few rows of the dataframe
+df[['company_name', 'address', 'phone_number', 'website']].head(2)
+```
+
+| company_name | address | phone_number | website |
+|-------------|---------|-------------|---------|
+| Maria V Photography | 13634 Vian Rd, Poway, CA 92064 | +18133352197 | https://www.mariavphotography.com/ |
+| Zeena Gregg Photography | 15604 Riparian Rd, Poway, CA 92064 | +18587800510 | http://www.zeenagregg.com/ |
+
+## Enriching company data
+
+Let's first enrich one company to see how it works. We'll select a company from our search results:
+
+```python
+random_company = df.iloc[15].to_dict()
+
+# Define additional fields for enrichment
+new_fields = {
+    "instagram_url": "Instagram url for the photography company",
+    "num_employees": "How many employees work there, give approximation if you don't have exact number"
+}
+
+# Set up people search parameters
+find_people = True
+people_focus_prompt = "Find me the owners of the company and the office manager"
+lead_struct = {
+    "name": "name of the person",
+    "title": "title of the person at the company",
+    "email": "email of the person",
+    "phone_number": "phone number of the person",
+    "instagram_url": "instagram url for the person"
+}
+
+# Optional research plan to guide the enrichment process
+research_plan = "Check their website, online profiles, and linkedin for the people. Looking for the individual portfolios of the employees can help too"
+
+# Make the enrichment API call
+req = requests.post(
+    "https://api.sixtyfour.ai/enrich-company",
+    headers={
+        'x-api-key': SIXTYFOUR_API_KEY,
+        "Content-Type": "application/json"
+    },
+    json={
+        "target_company": random_company,
+        "struct": new_fields,
+        "find_people": find_people,
+        "research_plan": research_plan,
+        "people_focus_prompt": people_focus_prompt
+    }
+)
+
+res = req.json()
+```
+
+Example enrichment results:
+```python
+# Display the enriched company data
+pd.DataFrame([res['structured_data']])[['company_name', 'address', 'phone_number', 'website', 'num_employees', 'instagram_url']]
+```
+
+| company_name | address | phone_number | website | num_employees | instagram_url |
+|-------------|---------|-------------|---------|--------------|--------------|
+| Elle G Photography | 1070 Sapphire St, San Diego, CA 92109 | +18583441068 | https://ellegphotography.com/ | Less than 10 core staff members | https://www.instagram.com/ellegphotography/ |
+
+```python
+# Display the leads found for this company
+pd.DataFrame(res['structured_data']['leads'])
+```
+
+| name | email | title | phone | score | linkedin |
+|------|-------|-------|-------|-------|----------|
+| Lisa Gisczinski | ellegphotography@me.com | Owner and Principal Photographer | +18583441068 | 9 | https://www.linkedin.com/in/studioellephotography |
+
+## Processing all companies
+
+Now let's create functions to process all companies asynchronously. This allows us to enrich multiple companies in parallel:
+
+```python
+async def enrich_company(
+    client: httpx.AsyncClient,
+    semaphore: asyncio.Semaphore,
+    company: dict,
+    max_retries: int = 3
+):
+    """Enrich company info using the SixtyFour API with retries and concurrency limits."""
+    async with semaphore:
+        for attempt in range(max_retries):
+            try:
+                response = await client.post(
+                    "https://api.sixtyfour.ai/enrich-company",
+                    headers={
+                        'x-api-key': SIXTYFOUR_API_KEY,
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "target_company": company,
+                        "struct": new_fields,
+                        "find_people": find_people,
+                        "research_plan": research_plan,
+                        "people_focus_prompt": people_focus_prompt
+                    }
+                )
+                response.raise_for_status()
+                return response.json()
+            except httpx.HTTPStatusError as http_err:
+                print(f"HTTP error occurred: {http_err}")
+            except httpx.RequestError as req_err:
+                print(f"Request error occurred: {req_err}")
+                if attempt < max_retries - 1:
+                    print(f"Retrying ({attempt + 1}/{max_retries})...")
+                    await asyncio.sleep(2 ** attempt)
+                    continue
+            except Exception as e:
+                print(f"Unexpected error: {e}")
+            return None
+    return None
+
+async def process_leads(df: pd.DataFrame) -> list:
+    results = []
+    semaphore = asyncio.Semaphore(100)  # Limit concurrent requests
+    timeout = httpx.Timeout(300.0, connect=10.0)
+
+    async with httpx.AsyncClient(follow_redirects=True, timeout=timeout) as client:
+        tasks = [enrich_company(client, semaphore, df.iloc[i].to_dict()) for i in range(len(df))]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+
+    return results
+
+# Process the first 20 companies
+results = asyncio.run(process_leads(df.head(20)))
+df_enriched = pd.DataFrame(results)
+df_enriched_data = pd.DataFrame(df_enriched['structured_data'].to_list())
+```
+
+## Extracting individual leads
+
+Let's create a function to extract individual leads from the enriched data. This will help us create a more detailed contact list:
+
+```python
+def generate_lead_rows(company_data):
+    """
+    Given a company_data dictionary containing company info and a list of leads,
+    this function returns a list of dictionaries, where each dictionary represents
+    a row containing both the company information and the individual lead details.
+    """
+    company_info = {key: value for key, value in company_data.items() if key != "leads"}
+    lead_rows = []
+
+    for lead in company_data.get("leads", []):
+        row = company_info.copy()
+        row.update(lead)
+        lead_rows.append(row)
+
+    if not lead_rows:
+        return [company_info]
+
+    return lead_rows
+
+individual_leads = pd.DataFrame(df_enriched_data.apply(generate_lead_rows, axis=1).sum())
+```
+
+Example lead extraction results:
+```python
+# Display the first few leads with key information
+individual_leads[['name', 'company', 'title', 'email', 'phone', 'score']].head(2)
+```
+
+| name | company | title | email | phone | score |
+|------|---------|-------|-------|-------|-------|
+| Maria Velasquez | Maria V Photography | Owner, Primary Photographer | maria@mariavphotography.com | +18133352197 | 9 |
+| Zeena Gregg | Zeena Gregg Photography | Owner / Lead Photographer | zeena@zeenagregg.com | +18587800510 | 8 |
+
+## Finding email addresses
+
+Let's create functions to find email addresses for the leads. This will help us verify and find additional contact information:
+
+```python
+async def fetch_email(client: httpx.AsyncClient, semaphore: asyncio.Semaphore, lead: dict, max_retries: int = 3):
+    """Fetch email with concurrency control and retry mechanism."""
+    async with semaphore:
+        for attempt in range(max_retries):
+            try:
+                response = await client.post(
+                    "https://api.sixtyfour.ai/find-email",
+                 headers={
+                        'x-api-key': SIXTYFOUR_API_KEY,
+                        "Content-Type": "application/json"
+                    },
+                    json={"lead": lead}
+                )
+                response.raise_for_status()
+                return response.text
+            except httpx.HTTPStatusError as http_err:
+                print(f"HTTP error occurred: {http_err}")
+            except httpx.RequestError as req_err:
+                print(f"Request error occurred: {req_err}")
+                if attempt < max_retries - 1:
+                    print(f"Retrying ({attempt + 1}/{max_retries})...")
+                    await asyncio.sleep(2 ** attempt)
+                    continue
+            except Exception as e:
+                print(f"Unexpected error: {e}")
+            return None
+    return None
+
+async def process_leads_email(df: pd.DataFrame) -> list:
+    results = []
+    semaphore = asyncio.Semaphore(100)
+    timeout = httpx.Timeout(300.0, connect=10.0)
+    
+    async with httpx.AsyncClient(follow_redirects=True, timeout=timeout) as client:
+        tasks = [fetch_email(client, semaphore, df.iloc[i].to_dict()) for i in range(len(df))]
+        results = await asyncio.gather(*tasks, return_exceptions=True)
+    
+    return results
+
+# Process emails for all leads
+results_email = asyncio.run(process_leads_email(individual_leads))
+final_df = pd.DataFrame([eval(r) for r in results_email])
+
+# Clean up email data
+final_df['email'] = final_df['email'].apply(
+    lambda x: x if not isinstance(x, list) else x[0][0] if x and x[0][1] != 'UNKNOWN' else ''
+)
+```
+
+## Saving the results
+
+Finally, you can save the enriched data to CSV files for use in your CRM or other systems:
+
+```python
+# Save account level data
+df_enriched_data.to_csv('account_level.csv')
+
+# Save individual leads data
+final_df.to_csv('leads.csv')
+```
+
+## Summary
+
+This notebook demonstrates how to:
+1. Search for businesses using the Sixtyfour API
+2. Enrich company data with additional information
+3. Extract individual leads from company data
+4. Find email addresses for leads
+5. Save the results for use in your CRM or other systems
+
+The process is designed to be scalable and efficient, using asynchronous processing to handle multiple companies simultaneously. The results can be used for:
+- Sales prospecting
+- Market research
+- Lead generation
+- Business development
+- Competitive analysis
+
+## Best Practices
+
+1. **Rate Limiting**: The code includes a semaphore to limit concurrent requests to 100. Adjust this based on your API plan limits.
+2. **Error Handling**: The code includes retry logic with exponential backoff for failed requests.
+3. **Data Quality**: The email cleaning step helps ensure data quality by removing unverified email addresses.
+4. **Scalability**: The async processing allows for efficient handling of large datasets.
+5. **Data Export**: Results are saved in CSV format for easy integration with other tools.
+
+## Next Steps
+
+1. Integrate with your CRM system
+2. Set up automated lead scoring
+3. Create email campaigns
+4. Track engagement metrics
+5. Refine search criteria based on results

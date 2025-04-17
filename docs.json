@@ -28,6 +28,12 @@
               "inbound-tool/quickstart",
               "inbound-tool/starter-kits"
             ]
+          },
+          {
+            "group":"Starter Notebooks",
+            "pages":[
+              "starter-notebooks/find-leads-on-small-and-medium-businesses"
+            ]
           }
         ]
       },
