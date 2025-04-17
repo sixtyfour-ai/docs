@@ -47,12 +47,12 @@
             ]
           },
           {
-            "group": "Endpoint Examples",
+            "group": "Endpoints",
             "pages": [
-              "api-reference/endpoint/get",
-              "api-reference/endpoint/create",
-              "api-reference/endpoint/delete",
-              "api-reference/endpoint/webhook"
+              "api-reference/endpoint/search",
+              "api-reference/endpoint/enrich-company",
+              "api-reference/endpoint/enrich-lead",
+              "api-reference/endpoint/find-email"
             ]
           }
         ]
@@ -98,8 +98,60 @@
   "footer": {
     "socials": {
       "x": "https://x.com/sixtyfourai",
-      "github": "https://github.com/sixtyfour-ai",
-      "linkedin": "https://www.linkedin.com/company/sixtyfourai"
-    }
+      "github": "https://github.com/sixtyfour-ai"
+    },
+    "links": [
+      {
+        "group": "Product",
+        "items": [
+          {
+            "label": "Features",
+            "href": "https://sixtyfour.ai/features"
+          },
+          {
+            "label": "Pricing",
+            "href": "https://sixtyfour.ai/pricing"
+          },
+          {
+            "label": "Changelog",
+            "href": "https://sixtyfour.ai/changelog"
+          }
+        ]
+      },
+      {
+        "group": "Resources",
+        "items": [
+          {
+            "label": "Documentation",
+            "href": "https://docs.sixtyfour.ai"
+          },
+          {
+            "label": "Blog",
+            "href": "https://sixtyfour.ai/blog"
+          },
+          {
+            "label": "Community",
+            "href": "https://www.reddit.com/r/64ai/"
+          }
+        ]
+      },
+      {
+        "group": "Company",
+        "items": [
+          {
+            "label": "About",
+            "href": "https://sixtyfour.ai/about"
+          },
+          {
+            "label": "Careers",
+            "href": "https://sixtyfour.ai/careers"
+          },
+          {
+            "label": "Contact",
+            "href": "mailto:team@sixtyfour.ai"
+          }
+        ]
+      }
+    ]
   }
 }

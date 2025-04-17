@@ -3,26 +3,57 @@ title: 'Introduction'
 description: 'Welcome to the official Sixtyfour API reference documentation.'
 ---
 
-## Welcome
+# Sixtyfour API Documentation
 
-There are two ways to build API documentation: [OpenAPI](https://mintlify.com/docs/api-playground/openapi/setup) and [MDX components](https://mintlify.com/docs/api-playground/mdx/configuration). For the starter kit, we are using the following OpenAPI specification.
-
-<Card
-  title="Plant Store Endpoints"
-  icon="leaf"
-  href="https://github.com/mintlify/starter/blob/main/api-reference/openapi.json"
->
-  View the OpenAPI specification file
-</Card>
+Welcome to the Sixtyfour API documentation. This API allows you to find and enrich business data, including company information and contact details.
 
 ## Authentication
 
-All API endpoints are authenticated using Bearer tokens and picked up from the specification file.
+All API requests require an API key, which should be included in the `x-api-key` header:
+
+```http
+x-api-key: your_api_key_here
+```
+
+## Base URL
+
+All API endpoints are available at:
+
+```
+https://api.sixtyfour.ai
+```
+
+## Rate Limits
+
+The API is rate limited to 1000 requests per minute per API key.
+
+## Endpoints
+
+The API provides the following endpoints:
+
+1. [Search for Businesses](/api-reference/endpoint/search) - Find businesses based on natural language queries
+2. [Enrich Company Data](/api-reference/endpoint/enrich-company) - Enrich company data with additional information and find associated people
+3. [Find Email Address](/api-reference/endpoint/find-email) - Find email addresses for leads
+
+## Error Handling
+
+All errors return a JSON response with the following structure:
 
 ```json
-"security": [
-  {
-    "bearerAuth": []
-  }
-]
+{
+  "error": "Error Type",
+  "message": "Detailed error message"
+}
 ```
+
+## Getting Started
+
+To get started with the Sixtyfour API:
+
+1. Sign up at [https://app.sixtyfour.ai](https://app.sixtyfour.ai)
+2. Get your API key from the dashboard
+3. Make your first API request using one of the example code snippets in the endpoint documentation
+
+## Support
+
+For support, please contact support@sixtyfour.ai or visit our [help center](https://help.sixtyfour.ai).

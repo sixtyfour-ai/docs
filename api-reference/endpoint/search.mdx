@@ -1,0 +1,100 @@
+# Search for Businesses
+
+Search for businesses based on natural language queries.
+
+## Endpoint
+
+```http
+POST /search
+```
+
+## Request
+
+### Headers
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| x-api-key | string | Yes | Your Sixtyfour API key |
+| Content-Type | string | Yes | Must be application/json |
+
+### Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| search_query | string | Yes | Natural language description of businesses to find |
+| struct | object | Yes | Fields to collect for each business |
+
+### Example Request
+
+```json
+{
+  "search_query": "Find me all photographers in La Jolla, California",
+  "struct": {
+    "company_name": "Name of the company",
+    "company_email": "Email for the company",
+    "address": "Where are they located",
+    "city": "City they are located in",
+    "state": "Which state do they operate in",
+    "phone_number": "Their phone number",
+    "company_linkedin": "Linkedin profile of the company if available",
+    "google_profile": "Google business profile if found",
+    "website": "Website of the company",
+    "key_people": "name of people here separated by commas"
+  }
+}
+```
+
+## Response
+
+### Success Response (200)
+
+Returns an array of matching businesses with the requested fields.
+
+```json
+[
+  {
+    "company_name": "Maria V Photography",
+    "address": "13634 Vian Rd, Poway, CA 92064",
+    "phone_number": "+18133352197",
+    "website": "https://www.mariavphotography.com/"
+  }
+]
+```
+
+### Error Response (400)
+
+```json
+{
+  "error": "Bad Request",
+  "message": "Invalid search query"
+}
+```
+
+## Rate Limits
+
+The API is rate limited to 1000 requests per minute per API key.
+
+## Example Usage
+
+```python
+import requests
+
+response = requests.post(
+    'https://api.sixtyfour.ai/search',
+    headers={
+        'x-api-key': 'your_api_key',
+        'Content-Type': 'application/json'
+    },
+    json={
+        "search_query": "Find me all photographers in La Jolla, California",
+        "struct": {
+            "company_name": "Name of the company",
+            "address": "Where are they located",
+            "phone_number": "Their phone number",
+            "website": "Website of the company"
+        }
+    }
+)
+
+results = response.json()
+``` 

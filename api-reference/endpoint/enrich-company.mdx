@@ -1,0 +1,120 @@
+# Enrich Company Data
+
+Enrich company data with additional information and find associated people.
+
+## Endpoint
+
+```http
+POST /enrich-company
+```
+
+## Request
+
+### Headers
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| x-api-key | string | Yes | Your Sixtyfour API key |
+| Content-Type | string | Yes | Must be application/json |
+
+### Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| target_company | object | Yes | Company data to enrich |
+| struct | object | Yes | Additional fields to collect |
+| find_people | boolean | No | Whether to find people associated with the company |
+| research_plan | string | No | Optional research plan to guide enrichment |
+| people_focus_prompt | string | No | Description of people to find |
+
+### Example Request
+
+```json
+{
+  "target_company": {
+    "company_name": "Elle G Photography",
+    "address": "1070 Sapphire St, San Diego, CA 92109",
+    "phone_number": "+18583441068",
+    "website": "https://ellegphotography.com/"
+  },
+  "struct": {
+    "instagram_url": "Instagram url for the photography company",
+    "num_employees": "How many employees work there, give approximation if you don't have exact number"
+  },
+  "find_people": true,
+  "research_plan": "Check their website, online profiles, and linkedin for the people. Looking for the individual portfolios of the employees can help too",
+  "people_focus_prompt": "Find me the owners of the company and the office manager"
+}
+```
+
+## Response
+
+### Success Response (200)
+
+Returns enriched company data including leads if requested.
+
+```json
+{
+  "structured_data": {
+    "company_name": "Elle G Photography",
+    "address": "1070 Sapphire St, San Diego, CA 92109",
+    "phone_number": "+18583441068",
+    "website": "https://ellegphotography.com/",
+    "num_employees": "Less than 10 core staff members",
+    "instagram_url": "https://www.instagram.com/ellegphotography/",
+    "leads": [
+      {
+        "name": "Lisa Gisczinski",
+        "email": "ellegphotography@me.com",
+        "title": "Owner and Principal Photographer",
+        "phone": "+18583441068",
+        "score": 9,
+        "linkedin": "https://www.linkedin.com/in/studioellephotography"
+      }
+    ]
+  }
+}
+```
+
+### Error Response (400)
+
+```json
+{
+  "error": "Bad Request",
+  "message": "Invalid company data"
+}
+```
+
+## Rate Limits
+
+The API is rate limited to 1000 requests per minute per API key.
+
+## Example Usage
+
+```python
+import requests
+
+response = requests.post(
+    'https://api.sixtyfour.ai/enrich-company',
+    headers={
+        'x-api-key': 'your_api_key',
+        'Content-Type': 'application/json'
+    },
+    json={
+        "target_company": {
+            "company_name": "Elle G Photography",
+            "address": "1070 Sapphire St, San Diego, CA 92109",
+            "phone_number": "+18583441068",
+            "website": "https://ellegphotography.com/"
+        },
+        "struct": {
+            "instagram_url": "Instagram url for the photography company",
+            "num_employees": "How many employees work there"
+        },
+        "find_people": true,
+        "people_focus_prompt": "Find me the owners of the company"
+    }
+)
+
+results = response.json()
+``` 

@@ -1,0 +1,145 @@
+# Enrich Lead Information
+
+Enrich lead information with additional details such as contact information, social profiles, and company details.
+
+## Endpoint
+
+```http
+POST /enrich-lead
+```
+
+## Request
+
+### Headers
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| x-api-key | string | Yes | Your Sixtyfour API key |
+| Content-Type | string | Yes | Must be application/json |
+
+### Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| lead_info | object | Yes | Initial lead information as key-value pairs |
+| struct | object | Yes | Fields to collect about the lead |
+
+### Example Request
+
+```json
+{
+  "lead_info": {
+    "name": "Saarth Shah",
+    "title": "CEO & Co-Founder @ Sixtyfour AI",
+    "company": "Sixtyfour AI",
+    "location": "San Francisco",
+    "linkedin": "https://www.linkedin.com/in/saarthshah"
+  },
+  "struct": {
+    "name": "The individual's full name",
+    "email": "The individual's email address",
+    "phone": "The individual's phone number",
+    "company": "The company the individual is associated with",
+    "title": "The individual's job title",
+    "linkedin": "LinkedIn URL for the person",
+    "website": "Company website URL",
+    "location": "The individual's location and/or company location",
+    "industry": "Industry the person operates in",
+    "github_url": "url for their github profile",
+    "github_notes": "Take detailed notes on their github profile."
+  }
+}
+```
+
+## Response
+
+### Success Response (200)
+
+Returns enriched lead data with detailed information and sources.
+
+```json
+{
+  "notes": "Saarth Shah is the Co-Founder and CEO of Sixtyfour AI, an AI company focused on building AI agents to help GTM (Go-To-Market) teams sell better and faster to SMBs. He is based in San Francisco, California. His LinkedIn profile is https://www.linkedin.com/in/saarthshah, which shows 500+ connections and highlights his education with Y Combinator and UC Berkeley...",
+  "structured_data": {
+    "name": "Saarth Shah",
+    "email": "saarth@sixtyfour.ai",
+    "phone": "",
+    "company": "Sixtyfour AI",
+    "title": "CEO & Co-Founder",
+    "linkedin": "https://www.linkedin.com/in/saarthshah",
+    "website": "https://www.sixtyfour.ai/",
+    "location": "San Francisco, California, USA",
+    "industry": "Artificial Intelligence and Sales Technology",
+    "github_url": "https://github.com/SaarthShah",
+    "github_notes": "Saarth Shah's GitHub profile demonstrates technical expertise with projects related to AI and full-stack development. Notable repositories include search spelling correction, AI chatbots, and data science models, corroborating his data science background."
+  },
+  "findings": [
+    "Saarth Shah is CEO & Co-Founder of Sixtyfour AI",
+    "Company website: https://www.sixtyfour.ai/",
+    "LinkedIn profile: https://www.linkedin.com/in/saarthshah",
+    "Located in San Francisco, California",
+    "GitHub profile: https://github.com/SaarthShah",
+    "Email partially known: s******@gmail.com",
+    "Phone partially known: 732-318-****",
+    "Background includes UC Berkeley, Y Combinator, and AI-related roles"
+  ],
+  "references": {
+    "https://www.linkedin.com/in/saarthshah": "Saarth Shah LinkedIn profile with current role, location, and background information.",
+    "https://www.sixtyfour.ai/": "Sixtyfour AI official company website detailing services and confirming company location and focus area.",
+    "https://github.com/SaarthShah": "GitHub profile showing Saarth Shah's repositories and technical projects related to AI and full-stack development.",
+    "https://rocketreach.co/saarth-shah-email_292174962": "Partial email and phone contact details found via RocketReach.",
+    "https://www.saarthshah.com/": "Personal website of Saarth Shah with bio, projects, and contact email saarth@sixtyfour.ai."
+  }
+}
+```
+
+### Error Response (400)
+
+```json
+{
+  "error": "Bad Request",
+  "message": "Invalid lead information"
+}
+```
+
+## Rate Limits
+
+The API is rate limited to 1000 requests per minute per API key.
+
+## Example Usage
+
+```python
+import requests
+
+response = requests.post(
+    'https://api.sixtyfour.ai/enrich-lead',
+    headers={
+        'x-api-key': 'your_api_key',
+        'Content-Type': 'application/json'
+    },
+    json={
+        "lead_info": {
+            "name": "Saarth Shah",
+            "title": "CEO & Co-Founder @ Sixtyfour AI",
+            "company": "Sixtyfour AI",
+            "location": "San Francisco",
+            "linkedin": "https://www.linkedin.com/in/saarthshah"
+        },
+        "struct": {
+            "name": "The individual's full name",
+            "email": "The individual's email address",
+            "phone": "The individual's phone number",
+            "company": "The company the individual is associated with",
+            "title": "The individual's job title",
+            "linkedin": "LinkedIn URL for the person",
+            "website": "Company website URL",
+            "location": "The individual's location and/or company location",
+            "industry": "Industry the person operates in",
+            "github_url": "url for their github profile",
+            "github_notes": "Take detailed notes on their github profile."
+        }
+    }
+)
+
+results = response.json()
+``` 

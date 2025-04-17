@@ -1,0 +1,90 @@
+# Find Email Address
+
+Find email address for a lead.
+
+## Endpoint
+
+```http
+POST /find-email
+```
+
+## Request
+
+### Headers
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| x-api-key | string | Yes | Your Sixtyfour API key |
+| Content-Type | string | Yes | Must be application/json |
+
+### Body
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| lead | object | Yes | Lead information to find email for |
+
+### Example Request
+
+```json
+{
+  "lead": {
+    "name": "Lisa Gisczinski",
+    "company": "Elle G Photography",
+    "title": "Owner and Principal Photographer",
+    "phone": "+18583441068",
+    "linkedin": "https://www.linkedin.com/in/studioellephotography"
+  }
+}
+```
+
+## Response
+
+### Success Response (200)
+
+Returns the found email address and confidence score.
+
+```json
+{
+  "email": "ellegphotography@me.com",
+  "confidence": 0.95,
+  "sources": ["company_website", "linkedin"]
+}
+```
+
+### Error Response (400)
+
+```json
+{
+  "error": "Bad Request",
+  "message": "Invalid lead data"
+}
+```
+
+## Rate Limits
+
+The API is rate limited to 1000 requests per minute per API key.
+
+## Example Usage
+
+```python
+import requests
+
+response = requests.post(
+    'https://api.sixtyfour.ai/find-email',
+    headers={
+        'x-api-key': 'your_api_key',
+        'Content-Type': 'application/json'
+    },
+    json={
+        "lead": {
+            "name": "Lisa Gisczinski",
+            "company": "Elle G Photography",
+            "title": "Owner and Principal Photographer",
+            "phone": "+18583441068",
+            "linkedin": "https://www.linkedin.com/in/studioellephotography"
+        }
+    }
+)
+
+results = response.json()
+``` 

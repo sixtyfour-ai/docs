@@ -1,90 +1,155 @@
 {
   "openapi": "3.1.0",
   "info": {
-    "title": "OpenAPI Plant Store",
-    "description": "A sample API that uses a plant store as an example to demonstrate features in the OpenAPI specification",
-    "license": {
-      "name": "MIT"
-    },
+    "title": "Sixtyfour API",
+    "description": "API for finding and enriching business data",
     "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "http://sandbox.mintlify.com"
+      "url": "https://api.sixtyfour.ai"
     }
   ],
   "security": [
     {
-      "bearerAuth": []
+      "apiKeyAuth": []
     }
   ],
-  "paths": {
-    "/plants": {
-      "get": {
-        "description": "Returns all plants from the system that the user has access to",
-        "parameters": [
-          {
-            "name": "limit",
-            "in": "query",
-            "description": "The maximum number of results to return",
-            "schema": {
-              "type": "integer",
-              "format": "int32"
+  "components": {
+    "securitySchemes": {
+      "apiKeyAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-api-key"
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          }
+        }
+      },
+      "SearchRequest": {
+        "type": "object",
+        "required": ["search_query", "struct"],
+        "properties": {
+          "search_query": {
+            "type": "string",
+            "description": "Natural language description of businesses to find"
+          },
+          "struct": {
+            "type": "object",
+            "description": "Fields to collect for each business",
+            "additionalProperties": {
+              "type": "string"
             }
           }
-        ],
+        }
+      },
+      "EnrichRequest": {
+        "type": "object",
+        "required": ["target_company", "struct"],
+        "properties": {
+          "target_company": {
+            "type": "object",
+            "description": "Company data to enrich"
+          },
+          "struct": {
+            "type": "object",
+            "description": "Additional fields to collect",
+            "additionalProperties": {
+              "type": "string"
+            }
+          },
+          "find_people": {
+            "type": "boolean",
+            "description": "Whether to find people associated with the company"
+          },
+          "research_plan": {
+            "type": "string",
+            "description": "Optional research plan to guide enrichment"
+          },
+          "people_focus_prompt": {
+            "type": "string",
+            "description": "Description of people to find"
+          }
+        }
+      },
+      "FindEmailRequest": {
+        "type": "object",
+        "required": ["lead"],
+        "properties": {
+          "lead": {
+            "type": "object",
+            "description": "Lead information to find email for"
+          }
+        }
+      },
+      "EnrichLeadRequest": {
+        "type": "object",
+        "required": ["lead_info", "struct"],
+        "properties": {
+          "lead_info": {
+            "type": "object",
+            "description": "Initial lead information as key-value pairs",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "example": {
+              "name": "Saarth Shah",
+              "title": "CEO & Co-Founder @ Sixtyfour AI",
+              "company": "Sixtyfour AI"
+            }
+          },
+          "struct": {
+            "type": "object",
+            "description": "Fields to collect about the lead",
+            "additionalProperties": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/search": {
+      "post": {
+        "summary": "Search for businesses",
+        "description": "Search for businesses based on natural language query",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SearchRequest"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": "Plant response",
+            "description": "List of matching businesses",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
+                  "maxItems": 1000,
                   "items": {
-                    "$ref": "#/components/schemas/Plant"
+                    "type": "object"
                   }
                 }
               }
             }
           },
           "400": {
-            "description": "Unexpected error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Error"
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "description": "Creates a new plant in the store",
-        "requestBody": {
-          "description": "Plant to add to the store",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/NewPlant"
-              }
-            }
-          },
-          "required": true
-        },
-        "responses": {
-          "200": {
-            "description": "plant response",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Plant"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "unexpected error",
+            "description": "Bad request",
             "content": {
               "application/json": {
                 "schema": {
@@ -96,28 +161,63 @@
         }
       }
     },
-    "/plants/{id}": {
-      "delete": {
-        "description": "Deletes a single plant based on the ID supplied",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "description": "ID of plant to delete",
-            "required": true,
-            "schema": {
-              "type": "integer",
-              "format": "int64"
+    "/enrich-company": {
+      "post": {
+        "summary": "Enrich company data",
+        "description": "Enrich company data with additional information and find associated people",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnrichRequest"
+              }
             }
           }
-        ],
+        },
         "responses": {
-          "204": {
-            "description": "Plant deleted",
-            "content": {}
+          "200": {
+            "description": "Enriched company data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "notes": {
+                      "type": "string",
+                      "description": "Detailed analysis and summary of the company"
+                    },
+                    "structured_data": {
+                      "type": "object",
+                      "description": "Enriched company information in structured format",
+                      "properties": {
+                        "Company Name": { "type": "string" },
+                        "Company Location": { "type": "string" },
+                        "Website Url": { "type": "string" },
+                        "Number of Employees": { "type": "string" },
+                        "Industry": { "type": "string" },
+                        "num_followers": { "type": "string" },
+                        "num_posts": { "type": "string" },
+                        "whatnot_score": { "type": "string" },
+                        "approx_inventory_count": { "type": "string" },
+                        "instagram_url": { "type": "string" }
+                      }
+                    },
+                    "findings": {
+                      "type": "array",
+                      "maxItems": 1000,
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "List of key findings about the company"
+                    }
+                  }
+                }
+              }
+            }
           },
           "400": {
-            "description": "unexpected error",
+            "description": "Bad request",
             "content": {
               "application/json": {
                 "schema": {
@@ -128,89 +228,119 @@
           }
         }
       }
-    }
-  },
-  "webhooks": {
-    "/plant/webhook": {
+    },
+    "/find-email": {
       "post": {
-        "description": "Information about a new plant added to the store",
+        "summary": "Find email address",
+        "description": "Find email address for a lead",
         "requestBody": {
-          "description": "Plant added to the store",
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/NewPlant"
+                "$ref": "#/components/schemas/FindEmailRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Return a 200 status to indicate that the data was received successfully"
-          }
-        }
-      }
-    }
-  },
-  "components": {
-    "schemas": {
-      "Plant": {
-        "required": [
-          "name"
-        ],
-        "type": "object",
-        "properties": {
-          "name": {
-            "description": "The name of the plant",
-            "type": "string"
-          },
-          "tag": {
-            "description": "Tag to specify the type",
-            "type": "string"
-          }
-        }
-      },
-      "NewPlant": {
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Plant"
-          },
-          {
-            "required": [
-              "id"
-            ],
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "Identification number of the plant",
-                "type": "integer",
-                "format": "int64"
+            "description": "Email address information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
               }
             }
-          }
-        ]
-      },
-      "Error": {
-        "required": [
-          "error",
-          "message"
-        ],
-        "type": "object",
-        "properties": {
-          "error": {
-            "type": "integer",
-            "format": "int32"
           },
-          "message": {
-            "type": "string"
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
           }
         }
       }
     },
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer"
+    "/enrich-lead": {
+      "post": {
+        "summary": "Enrich lead information",
+        "description": "Enrich lead information with additional details",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EnrichLeadRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Enriched lead data",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "notes": {
+                      "type": "string",
+                      "description": "Detailed notes about the lead and enrichment process"
+                    },
+                    "structured_data": {
+                      "type": "object",
+                      "description": "Enriched lead information in structured format",
+                      "properties": {
+                        "name": { "type": "string" },
+                        "email": { "type": "string" },
+                        "phone": { "type": "string" },
+                        "company": { "type": "string" },
+                        "title": { "type": "string" },
+                        "linkedin": { "type": "string" },
+                        "website": { "type": "string" },
+                        "location": { "type": "string" },
+                        "industry": { "type": "string" },
+                        "github_url": { "type": "string" },
+                        "github_notes": { "type": "string" }
+                      }
+                    },
+                    "findings": {
+                      "type": "array",
+                      "maxItems": 1000,
+                      "items": {
+                        "type": "string"
+                      },
+                      "description": "List of key findings about the lead"
+                    },
+                    "references": {
+                      "type": "object",
+                      "description": "Sources used for enrichment with descriptions",
+                      "additionalProperties": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
