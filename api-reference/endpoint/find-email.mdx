@@ -28,11 +28,11 @@ POST /find-email
 ```json
 {
   "lead": {
-    "name": "Lisa Gisczinski",
-    "company": "Elle G Photography",
-    "title": "Owner and Principal Photographer",
-    "phone": "+18583441068",
-    "linkedin": "https://www.linkedin.com/in/studioellephotography"
+    "name": "Sarah Chen",
+    "company": "Pacific View Studios",
+    "title": "Creative Director & Lead Photographer",
+    "phone": "+16195551234",
+    "linkedin": "https://www.linkedin.com/in/sarah-chen-photography"
   }
 }
 ```
@@ -45,12 +45,12 @@ Returns the found email address and confidence score.
 
 ```json
 {
-  "name": "Lisa Gisczinski",
-  "company": "Elle G Photography",
-  "title": "Owner and Principal Photographer",
-  "phone": "+18583441068",
-  "linkedin": "https://www.linkedin.com/in/studioellephotography"
-  "email": [["ellegphotography@me.com", "OK"]]
+  "name": "Sarah Chen",
+  "company": "Pacific View Studios",
+  "title": "Creative Director & Lead Photographer",
+  "phone": "+16195551234",
+  "linkedin": "https://www.linkedin.com/in/sarah-chen-photography",
+  "email": [["sarah@pacificview.studio", "OK"]]
 }
 ```
 
@@ -88,11 +88,11 @@ response = requests.post(
     },
     json={
         "lead": {
-            "name": "Lisa Gisczinski",
-            "company": "Elle G Photography",
-            "title": "Owner and Principal Photographer",
-            "phone": "+18583441068",
-            "linkedin": "https://www.linkedin.com/in/studioellephotography"
+            "name": "Sarah Chen",
+            "company": "Pacific View Studios",
+            "title": "Creative Director & Lead Photographer",
+            "phone": "+16195551234",
+            "linkedin": "https://www.linkedin.com/in/sarah-chen-photography"
         }
     }
 )

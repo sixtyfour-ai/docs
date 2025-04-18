@@ -31,10 +31,10 @@ POST /enrich-company
 ```json
 {
   "target_company": {
-    "company_name": "Elle G Photography",
-    "address": "1070 Sapphire St, San Diego, CA 92109",
-    "phone_number": "+18583441068",
-    "website": "https://ellegphotography.com/"
+    "company_name": "Pacific View Studios",
+    "address": "1234 Ocean View Dr, La Jolla, CA 92037",
+    "phone_number": "+16195551234",
+    "website": "https://pacificview.studio"
   },
   "struct": {
     "instagram_url": "Instagram url for the photography company",
@@ -54,39 +54,48 @@ Returns enriched company data including leads if requested.
 
 ```json
 {
-  "notes": "Elle G Photography is a photography company based in San Diego, California. They specialize in wedding, portrait, and commercial photography. The company has a strong online presence with an Instagram following and professional website. The business appears to be a small operation with less than 10 core staff members.",
+  "notes": "Pacific View Studios is a boutique photography company based in La Jolla, California. They specialize in luxury wedding photography, high-end portrait sessions, and commercial work for local businesses. The company has a strong social media presence and professional website. The business operates with a small, dedicated team of photographers and support staff.",
   "structured_data": {
-    "company_name": "Elle G Photography",
-    "address": "1070 Sapphire St, San Diego, CA 92109",
-    "phone_number": "+18583441068",
-    "website": "https://ellegphotography.com/",
-    "num_employees": "Less than 10 core staff members",
-    "instagram_url": "https://www.instagram.com/ellegphotography/",
+    "company_name": "Pacific View Studios",
+    "address": "1234 Ocean View Dr, La Jolla, CA 92037",
+    "phone_number": "+16195551234",
+    "website": "https://pacificview.studio",
+    "num_employees": "5-10 employees",
+    "instagram_url": "https://www.instagram.com/pacificview.studio",
     "leads": [
       {
-        "name": "Lisa Gisczinski",
-        "email": "ellegphotography@me.com",
-        "title": "Owner and Principal Photographer",
-        "phone": "+18583441068",
+        "name": "Sarah Chen",
+        "email": "sarah@pacificview.studio",
+        "title": "Creative Director & Lead Photographer",
+        "phone": "+16195551234",
         "score": 9,
-        "linkedin": "https://www.linkedin.com/in/studioellephotography"
+        "linkedin": "https://www.linkedin.com/in/sarah-chen-photography"
+      },
+      {
+        "name": "Michael Rodriguez",
+        "email": "michael@pacificview.studio",
+        "title": "Office Manager",
+        "phone": "+16195551234",
+        "score": 8,
+        "linkedin": "https://www.linkedin.com/in/michael-rodriguez-pvs"
       }
     ]
   },
   "findings": [
-    "Company specializes in wedding, portrait, and commercial photography",
-    "Located at 1070 Sapphire St, San Diego, CA 92109",
-    "Phone number: +18583441068",
-    "Website: https://ellegphotography.com/",
-    "Instagram: https://www.instagram.com/ellegphotography/",
-    "Small team of less than 10 core staff members",
-    "Owner and Principal Photographer: Lisa Gisczinski",
-    "Email contact: ellegphotography@me.com"
+    "Company specializes in luxury wedding photography and high-end portraits",
+    "Located at 1234 Ocean View Dr, La Jolla, CA 92037",
+    "Phone number: +16195551234",
+    "Website: https://pacificview.studio",
+    "Instagram: https://www.instagram.com/pacificview.studio",
+    "Team size: 5-10 employees",
+    "Creative Director: Sarah Chen",
+    "Office Manager: Michael Rodriguez"
   ],
   "references": {
-    "https://ellegphotography.com/": "Official company website with services, contact information, and portfolio",
-    "https://www.instagram.com/ellegphotography/": "Company Instagram profile showing recent work and engagement",
-    "https://www.linkedin.com/in/studioellephotography": "LinkedIn profile of the owner with business details"
+    "https://pacificview.studio": "Official company website with services and portfolio",
+    "https://www.instagram.com/pacificview.studio": "Company Instagram profile showing recent work",
+    "https://www.linkedin.com/in/sarah-chen-photography": "LinkedIn profile of the Creative Director",
+    "https://www.linkedin.com/in/michael-rodriguez-pvs": "LinkedIn profile of the Office Manager"
   }
 }
 ```
@@ -117,10 +126,10 @@ response = requests.post(
     },
     json={
         "target_company": {
-            "company_name": "Elle G Photography",
-            "address": "1070 Sapphire St, San Diego, CA 92109",
-            "phone_number": "+18583441068",
-            "website": "https://ellegphotography.com/"
+            "company_name": "Pacific View Studios",
+            "address": "1234 Ocean View Dr, La Jolla, CA 92037",
+            "phone_number": "+16195551234",
+            "website": "https://pacificview.studio"
         },
         "struct": {
             "instagram_url": "Instagram url for the photography company",
