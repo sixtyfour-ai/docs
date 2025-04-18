@@ -3,100 +3,75 @@ title: API Reference
 description: "Complete API documentation for the Inbound Tool"
 ---
 
-# API Reference
-
-This section provides detailed documentation for all available API endpoints and methods.
-
 ## Authentication
 
-All API requests require authentication using your API key:
+All API requests require two credentials:
+- `SIXTYFOUR_API_KEY`: Your API key
+- `SIXTYFOUR_CUSTOMER_ID`: Your customer identifier
 
-```javascript
-const inboundTool = new InboundTool({
-  apiKey: 'your-api-key'
-});
+These credentials serve to verify requests and link lead data to your account. In frontend applications, particularly with NextJS, create a server-side endpoint to process the API request, ensuring your API key remains secure and not exposed to the client.
+
+## Lead Data Structure
+
+The API accepts lead data in the following format:
+
+```json
+{
+  "name": "Saarth Shah",
+  "email": "saarth@berkeley.edu"
+}
 ```
 
-## Core Methods
+The enrichment engine can work with minimal information—just an official email address or a name combined with other identifiers like:
+- Company name
+- Location
+- Education history
+- Phone number
 
-### `initialize()`
+## API Endpoint
 
-Initializes the Inbound Tool and establishes a connection to the API.
+### Enrich Lead
 
-```javascript
-await inboundTool.initialize();
+Send lead data to be enriched:
+
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: {SIXTYFOUR_API_KEY}" \
+  -d '{
+    "lead_data": {
+      "name": "Saarth Shah",
+      "email": "saarth@berkeley.edu"
+    },
+    "customer_id": "{SIXTYFOUR_CUSTOMER_ID}"
+  }' https://sixtyfour-inbound.fly.dev/enrich-lead
 ```
 
-### `processLeads(options)`
-
-Processes leads based on specified criteria.
-
-**Parameters:**
-- `options` (Object):
-  - `source` (String): Lead source (e.g., 'linkedin', 'salesforce')
-  - `filters` (Object): Filter criteria
-  - `limit` (Number): Maximum number of leads to process
-
-**Example:**
-```javascript
-const results = await inboundTool.processLeads({
-  source: 'linkedin',
-  filters: {
-    industry: 'technology',
-    companySize: 'medium'
-  },
-  limit: 100
-});
+**Example Request:**
+```bash
+curl -X POST \
+  -H "Content-Type: application/json" \
+  -H "x-api-key: 3dfnflndlfkldfklwlkf76" \
+  -d '{
+    "lead_data": {
+      "name": "Robert Vazquez",
+      "phone": "415-826-7575"
+    },
+    "customer_id": "test-ai"
+  }' https://sixtyfour-inbound.fly.dev/enrich-lead
 ```
 
-### `getLeadDetails(leadId)`
+## Response
 
-Retrieves detailed information about a specific lead.
+After submitting a lead:
+1. You'll receive a task ID in the response
+2. If the lead is qualified, an enriched profile will be emailed to you within ~60 seconds
+3. All enriched leads (qualified or not) will be visible on your SixtyFour dashboard
+4. The API automatically rejects duplicate requests to save you money and avoid overwhelming our servers.
 
-**Parameters:**
-- `leadId` (String): Unique identifier of the lead
+Here's how the email will look:
+![Example of Enriched Lead Email](https://iszvhmzqbaplwemstyzy.supabase.co/storage/v1/object/public/website-images//inbound%20example.png)
 
-**Example:**
-```javascript
-const leadDetails = await inboundTool.getLeadDetails('lead-123');
-```
+## Configuration
 
-## Webhooks
-
-The Inbound Tool supports webhooks for real-time notifications. Configure webhooks in your dashboard to receive updates about:
-
-- New leads
-- Lead status changes
-- Processing completion
-
-## Rate Limits
-
-- Free tier: 100 requests/minute
-- Pro tier: 1000 requests/minute
-- Enterprise tier: Custom limits
-
-## Error Handling
-
-The API uses standard HTTP status codes:
-
-- 200: Success
-- 400: Bad Request
-- 401: Unauthorized
-- 403: Forbidden
-- 404: Not Found
-- 429: Too Many Requests
-- 500: Server Error
-
-## SDKs
-
-Official SDKs are available for:
-
-- [JavaScript/Node.js](https://github.com/sixtyfour/inbound-tool-js)
-- [Python](https://github.com/sixtyfour/inbound-tool-python)
-- [Ruby](https://github.com/sixtyfour/inbound-tool-ruby)
-
-## Need More Help?
-
-- Check out our [starter kits](/inbound-tool/starter-kits)
-- Visit our [community forum](https://community.sixtyfour.ai)
-- Contact our [support team](mailto:support@sixtyfour.ai) 
+To update notification email addresses or prompting criteria, please contact support at saarth@sixtyfour.ai. A self-serve dashboard for managing these settings will be available soon.
