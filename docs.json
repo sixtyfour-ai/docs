@@ -32,9 +32,7 @@
           {
             "group": "Inbound Tool",
             "pages": [
-              "inbound-tool/api-reference",
-              "inbound-tool/quickstart",
-              "inbound-tool/starter-kits"
+              "inbound-tool/api-reference"
             ]
           },
           {
