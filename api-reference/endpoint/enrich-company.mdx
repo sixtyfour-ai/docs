@@ -3,7 +3,6 @@
 Enrich company data with additional information and find associated people.
 
 ## Endpoint
-
 ```http
 POST /enrich-company
 ```
@@ -22,10 +21,10 @@ POST /enrich-company
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
 | target_company | object | Yes | Company data to enrich |
-| struct | object | Yes | Additional fields to collect |
+| struct | object | Yes | Fields to collect |
 | find_people | boolean | No | Whether to find people associated with the company |
 | research_plan | string | No | Optional research plan to guide enrichment |
-| people_focus_prompt | string | No | Description of people to find |
+| people_focus_prompt | string | No | Description of people to find, typically includes the roles or responsibilities of the people you're looking for |
 
 ### Example Request
 
@@ -55,6 +54,7 @@ Returns enriched company data including leads if requested.
 
 ```json
 {
+  "notes": "Elle G Photography is a photography company based in San Diego, California. They specialize in wedding, portrait, and commercial photography. The company has a strong online presence with an Instagram following and professional website. The business appears to be a small operation with less than 10 core staff members.",
   "structured_data": {
     "company_name": "Elle G Photography",
     "address": "1070 Sapphire St, San Diego, CA 92109",
@@ -72,6 +72,21 @@ Returns enriched company data including leads if requested.
         "linkedin": "https://www.linkedin.com/in/studioellephotography"
       }
     ]
+  },
+  "findings": [
+    "Company specializes in wedding, portrait, and commercial photography",
+    "Located at 1070 Sapphire St, San Diego, CA 92109",
+    "Phone number: +18583441068",
+    "Website: https://ellegphotography.com/",
+    "Instagram: https://www.instagram.com/ellegphotography/",
+    "Small team of less than 10 core staff members",
+    "Owner and Principal Photographer: Lisa Gisczinski",
+    "Email contact: ellegphotography@me.com"
+  ],
+  "references": {
+    "https://ellegphotography.com/": "Official company website with services, contact information, and portfolio",
+    "https://www.instagram.com/ellegphotography/": "Company Instagram profile showing recent work and engagement",
+    "https://www.linkedin.com/in/studioellephotography": "LinkedIn profile of the owner with business details"
   }
 }
 ```
@@ -117,4 +132,4 @@ response = requests.post(
 )
 
 results = response.json()
-``` 
+```
