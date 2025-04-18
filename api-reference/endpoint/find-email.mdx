@@ -45,11 +45,22 @@ Returns the found email address and confidence score.
 
 ```json
 {
-  "email": "ellegphotography@me.com",
-  "confidence": 0.95,
-  "sources": ["company_website", "linkedin"]
+  "name": "Lisa Gisczinski",
+  "company": "Elle G Photography",
+  "title": "Owner and Principal Photographer",
+  "phone": "+18583441068",
+  "linkedin": "https://www.linkedin.com/in/studioellephotography"
+  "email": [["ellegphotography@me.com", "OK"]]
 }
 ```
+
+The `email` field contains a list of tuples, where each tuple consists of:
+- Email address (string)
+- Validation status (string):
+  - `"OK"`: The email address has been validated and is likely deliverable
+  - `"UNKNOWN"`: The email address could not be validated or its deliverability status is uncertain, most likely because of catch all domains.
+
+If the lead information already includes an 'email' field, it will be returned unchanged in the response without attempting to find or validate a new email address.
 
 ### Error Response (400)
 
