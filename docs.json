@@ -11,14 +11,22 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Guides",
+        "tab": "Resources",
         "groups": [
           {
             "group": "Get Started",
             "pages": [
-              "introduction",
-              "quickstart",
-              "development"
+              "introduction"
+            ]
+          },
+          {
+            "group": "Enrichment API",
+            "pages": [
+              "api-reference/introduction",
+              "api-reference/endpoint/search",
+              "api-reference/endpoint/enrich-company",
+              "api-reference/endpoint/enrich-lead",
+              "api-reference/endpoint/find-email"
             ]
           },
           {
@@ -36,26 +44,6 @@
             ]
           }
         ]
-      },
-      {
-        "tab": "API Reference",
-        "groups": [
-          {
-            "group": "API Documentation",
-            "pages": [
-              "api-reference/introduction"
-            ]
-          },
-          {
-            "group": "Endpoints",
-            "pages": [
-              "api-reference/endpoint/search",
-              "api-reference/endpoint/enrich-company",
-              "api-reference/endpoint/enrich-lead",
-              "api-reference/endpoint/find-email"
-            ]
-          }
-        ]
       }
     ],
     "global": {
@@ -66,9 +54,9 @@
           "icon": "book-open-cover"
         },
         {
-          "anchor": "Community",
-          "href": "https://www.reddit.com/r/64ai/",
-          "icon": "slack"
+          "anchor": "GitHub",
+          "href": "https://github.com/sixtyfour-ai",
+          "icon": "github"
         },
         {
           "anchor": "Blog",
