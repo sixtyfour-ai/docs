@@ -32,7 +32,8 @@
           {
             "group": "Inbound Tool",
             "pages": [
-              "inbound-tool/api-reference"
+              "inbound-tool/api-reference",
+              "inbound-tool/google-sheets"
             ]
           },
           {

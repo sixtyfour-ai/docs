@@ -1,0 +1,167 @@
+# Google Sheets Inbound Tool
+
+This tool monitors a Google Sheet for new entries and automatically sends them to the SixtyFour AI enrichment API for processing.
+
+## Overview
+
+The tool is implemented as a Google Apps Script that:
+1. Monitors the active sheet for new rows
+2. Sanitizes column headers to create valid JSON keys
+3. Formats the data according to the API requirements
+4. Sends the data to the enrichment endpoint
+
+## Implementation
+
+The main function `sendNewRowToAPI()` performs the following steps:
+
+1. **Data Collection**:
+   - Gets the active sheet and all its data
+   - Extracts headers from the first row
+   - Gets the last row of data (new entry)
+
+2. **Data Sanitization**:
+   - Cleans column headers by:
+     - Removing newlines, carriage returns, and tabs
+     - Converting spaces to underscores
+     - Removing non-alphanumeric characters
+     - Converting to lowercase
+     - Removing leading underscores
+
+3. **Data Formatting**:
+   - Creates a JSON object using sanitized headers as keys
+   - Adds required fields:
+     - `id`: Empty string (to be populated by API)
+     - `created_at`: Current UTC timestamp
+     - `company_id`: Set to "bild-ai"
+
+4. **API Integration**:
+   - Sends data to `https://api.inbound.sixtyfour.ai/enrich-lead`
+   - Includes additional fields:
+     - `heard_about_us`: Set to "Website Form"
+     - `terms_agreed`: Set to null
+   - Requires API key authentication
+
+## Complete Code
+
+Copy and paste the following code into your Google Apps Script editor:
+
+```javascript
+function sendNewRowToAPI() {
+  const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  const data = sheet.getDataRange().getValues(); // Get all data from sheet
+  let headers = data[0]; // First row as column headers
+  const lastRow = data[data.length - 1]; // Last row of data
+
+  // Function to clean and sanitize column names (headers)
+  function sanitizeKey(key) {
+    // Remove newlines, carriage returns, tabs
+    key = key.replace(/[\n\r\t]+/g, " ")
+             .replace(/\s+/g, "_")  // Replace spaces with underscores
+             .replace(/[^\w_]/g, "") // Remove non-alphanumeric characters (except underscore)
+             .toLowerCase()  // Convert to lowercase for consistency
+             .trim();
+    
+    // Remove leading underscores
+    if (key.startsWith("_")) {
+      key = key.substring(1);
+    }
+    
+    return key;
+  }
+
+  // Sanitize headers
+  headers = headers.map(sanitizeKey);
+
+  // Convert row into JSON using sanitized headers as keys
+  let rowData = {};
+  headers.forEach((header, index) => {
+    rowData[header] = lastRow[index];
+  });
+
+  // Add required env variables
+  rowData["id"] = "";
+  rowData["created_at"] = new Date().toISOString(); // UTC timestamp
+  rowData["company_id"] = "bild-ai";
+
+  // Hardcoded API details
+  const API_ENDPOINT = "https://api.inbound.sixtyfour.ai/enrich-lead";
+  const API_KEY = "YOUR_API_KEY";
+  const CUSTOMER_ID = "YOUR_CUSTOMER_ID";
+
+  // Add API-required fields
+  const payload = {
+    lead_data: {
+      ...rowData,
+      heard_about_us: "Website Form",
+      terms_agreed: null
+    },
+    customer_id: CUSTOMER_ID
+  };
+
+  console.log(payload)
+
+  const options = {
+    method: "POST",
+    contentType: "application/json",
+    headers: {
+      "x-api-key": API_KEY
+    },
+    payload: JSON.stringify(payload)
+  };
+
+  try {
+    const response = UrlFetchApp.fetch(API_ENDPOINT, options);
+    Logger.log("API Response: " + response.getContentText());
+  } catch (error) {
+    Logger.log("Error sending data: " + error.toString());
+  }
+}
+```
+
+## Configuration
+
+Before using the tool, you need to set the following variables in the code:
+```javascript
+const API_KEY = "YOUR_API_KEY";
+const CUSTOMER_ID = "YOUR_CUSTOMER_ID";
+```
+
+## Error Handling
+
+The function includes error handling that:
+- Logs successful API responses
+- Catches and logs any errors during the API call
+
+## Usage
+
+1. Open your Google Sheet
+2. Go to Extensions > Apps Script
+3. Create a new script
+4. Copy and paste the function code
+5. Set up your API key and customer ID
+6. Create a trigger to run the function when new rows are added
+
+## Example Payload
+
+The function sends data in this format:
+```json
+{
+  "lead_data": {
+    "column1": "value1",
+    "column2": "value2",
+    "id": "",
+    "created_at": "2024-03-21T12:00:00.000Z",
+    "company_id": "bild-ai",
+    "heard_about_us": "Website Form",
+    "terms_agreed": null
+  },
+  "customer_id": "YOUR_CUSTOMER_ID"
+}
+```
+
+## Notes
+
+- The function processes only the last row of the sheet
+- Column headers are automatically sanitized to create valid JSON keys
+- All timestamps are in UTC format
+- The API requires authentication via x-api-key header
