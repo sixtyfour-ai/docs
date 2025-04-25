@@ -54,7 +54,7 @@ Returns the found email address and confidence score.
   "title": "Creative Director & Lead Photographer",
   "phone": "+16195551234",
   "linkedin": "https://www.linkedin.com/in/sarah-chen-photography",
-  "email": [["sarah@pacificview.studio", "OK"]]
+  "email": [["sarah@pacificview.studio", "OK", "COMPANY"]]
 }
 ```
 
@@ -63,8 +63,11 @@ The `email` field contains a list of tuples, where each tuple consists of:
 - Validation status (string):
   - `"OK"`: The email address has been validated and is likely deliverable
   - `"UNKNOWN"`: The email address could not be validated or its deliverability status is uncertain, most likely because of catch all domains.
+- Email type (string):
+  - `"COMPANY"`: The email address is associated with the company domain
+  - `"PERSONAL"`: The email address is a personal email address (e.g., Gmail, Yahoo, etc.)
 
-If the lead information already includes an 'email' field, it will be returned unchanged in the response without attempting to find or validate a new email address.
+If the lead information already includes an 'email' field, it will be returned unchanged in the response without attempting to find or validate a new email address. However, it will have the status `"OK"` and the type depending on the email address.
 
 ### Error Response (400)
 
