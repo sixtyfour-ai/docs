@@ -25,6 +25,7 @@ POST /find-email
 |-------|------|----------|-------------|
 | lead | object | Yes | Lead information to find email for |
 | bruteforce | boolean | No | Whether to use bruteforce to find email. Default is true, in brute force mode, the API will try to find an email address by appending common email suffixes to the domain part of the lead's name and then check if the email exists.|
+| only_company_emails | boolean | No | When set to true, the API will only return company email addresses. Default is false.|
 
 ### Example Request
 
@@ -37,7 +38,8 @@ POST /find-email
     "phone": "+16195551234",
     "linkedin": "https://www.linkedin.com/in/sarah-chen-photography"
   },
-  "bruteforce": false
+  "bruteforce": false,
+  "only_company_emails": true
 }
 ```
 
