@@ -33,6 +33,7 @@
             "group": "Inbound Tool",
             "pages": [
               "inbound-tool/api-reference",
+              "inbound-tool/getting-started",
               "inbound-tool/google-sheets"
             ]
           },
